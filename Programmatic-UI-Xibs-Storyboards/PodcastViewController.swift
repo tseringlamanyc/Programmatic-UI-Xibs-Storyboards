@@ -79,6 +79,14 @@ extension PodcastViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let podcast = podcasts[indexPath.row]
+        
+        // segue to podcast detail VC
+        let podcastDetailStoryboard = UIStoryboard(name: "PodcastDetail", bundle: nil)
+        guard let podcastDetailVC = podcastDetailStoryboard.instantiateViewController(identifier: "PodcastDetailController") as? PodcastDetailController else {
+            fatalError()
+        }
+        podcastDetailVC.podcast = podcast
+        navigationController?.pushViewController(podcastDetailVC, animated: true)
         print(podcast.collectionName)
     }
 }

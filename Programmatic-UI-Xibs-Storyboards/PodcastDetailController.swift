@@ -7,24 +7,34 @@
 //
 
 import UIKit
+import ImageKit
 
 class PodcastDetailController: UIViewController {
 
+    @IBOutlet weak var podcastImage: UIImageView!
+    @IBOutlet weak var artistName: UILabel!
+    
+    var podcast: Podcast?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        updateUI()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func updateUI() {
+        guard let podcast = podcast else {
+            fatalError()
+        }
+        artistName.text = podcast.artistName
+        podcastImage.getImage(with: podcast.artworkUrl600) { [weak self] (result) in
+            switch result {
+            case .failure(_):
+                print("no picture")
+            case .success(let image):
+                DispatchQueue.main.async {
+                    self?.podcastImage.image = image
+                }
+            }
+        }
     }
-    */
-
 }
