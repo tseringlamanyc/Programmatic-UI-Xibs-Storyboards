@@ -15,6 +15,9 @@ class PodcastViewController: UIViewController {
   private var podcasts = [Podcast]() {
     didSet {
       // code here
+        DispatchQueue.main.async {
+            self.podcastView.collectionView.reloadData()
+        }
     }
   }
 
@@ -28,8 +31,14 @@ class PodcastViewController: UIViewController {
     navigationItem.title = "Podcasts"
     podcastView.collectionView.dataSource = self
     podcastView.collectionView.delegate = self
+    
     // register cell
-    podcastView.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "podcastCell")
+    // 1)
+    // podcastView.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "podcastCell")
+    
+    // register cell using xib
+    // 2)
+    podcastView.collectionView.register(UINib(nibName: "PodcastCell", bundle: nil), forCellWithReuseIdentifier: "podcastCell")
     fetchPodcasts()
   }
   
@@ -47,11 +56,15 @@ class PodcastViewController: UIViewController {
 
 extension PodcastViewController: UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return 50
+    return podcasts.count
   }
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "podcastCell", for: indexPath)
+    // 1) let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "podcastCell", for: indexPath)
+    // 2)
+    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "podcastCell", for: indexPath) as? PodcastCell else {
+        fatalError()
+    }
     cell.backgroundColor = .systemGray
     return cell
   }
@@ -62,6 +75,11 @@ extension PodcastViewController: UICollectionViewDelegateFlowLayout {
         let maxSize = UIScreen.main.bounds.size
         let itemWidth: CGFloat = maxSize.width * 0.95
         return CGSize(width: itemWidth, height: 120)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let podcast = podcasts[indexPath.row]
+        print(podcast.collectionName)
     }
 }
 
